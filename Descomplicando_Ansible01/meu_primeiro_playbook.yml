@@ -1,0 +1,32 @@
+---
+- hosts: webservers
+  remote_user: root
+  tasks:
+  - name: instalando o Nginx
+    apt:
+      name: nginx
+      state: latest
+      update_cache: yes
+
+  - name: habilitando o start do nginx no boot
+    service:
+      name: nginx
+      enabled: yes
+
+
+  - name: Iniciando o Nginx
+    service:
+      name: nginx
+      state: started
+
+  - name: Copiando HTML personalizado
+    template:
+      src: index.html.j2
+      dest: /var/www/html/index.html
+    notify: Restart nginx
+
+  handlers:
+  - name: Restart nginx
+    service:
+      name: nginx
+      state: restarted
